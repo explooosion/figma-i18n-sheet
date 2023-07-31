@@ -5,13 +5,15 @@
   "main": "code.js",
   "scripts": {
     "build": "tsc -p tsconfig.json",
-    "watch": "npm run build -- --watch"
+    "watch": "npm run build -- --watch",
+    "format": "npx prettier --write \"**/*.{js,ts,vue,scss,html,md,json}\" --ignore-path .gitignore"
   },
   "author": "",
   "license": "",
   "devDependencies": {
     "@figma/plugin-typings": "^1.72.0",
     "@figma/widget-typings": "^1.5.0",
-    "typescript": "*"
+    "prettier": "^3.0.0",
+    "typescript": "^5.1.6"
   }
 }
