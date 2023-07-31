@@ -3,6 +3,8 @@
 // You can access browser APIs in the <script> tag inside "ui.html" which has a
 // full browser environment (See https://www.figma.com/plugin-docs/how-plugins-run).
 
+console.info('figma.editorType', figma.editorType);
+
 // Runs this code if the plugin is run in Figma
 if (figma.editorType === 'figma') {
   // This plugin will open a window to prompt the user to enter a number, and
@@ -10,6 +12,32 @@ if (figma.editorType === 'figma') {
 
   // This shows the HTML page in "ui.html".
   figma.showUI(__html__);
+
+  //#region TEST
+  function asyncData() {
+    const texts = figma.currentPage.findAll(
+      node => node.type === 'TEXT',
+    ) as TextNode[];
+    texts.forEach(async t => {
+      const fontName = t.getRangeFontName(
+        0,
+        t.characters.length - 1,
+      ) as FontName;
+      await figma.loadFontAsync(fontName);
+      t.characters = fontName.family;
+      console.log(t.name, t.characters);
+    });
+  }
+  asyncData();
+
+  // 假設這裡是獲取的數據
+  const data = {
+    name: 'John Doe',
+    age: 30,
+    location: 'New York',
+  };
+  figma.ui.postMessage(data);
+  //#endregion TEST
 
   // Calls to "parent.postMessage" from within the HTML page will trigger this
   // callback. The callback will be passed the "pluginMessage" property of the
@@ -56,16 +84,16 @@ if (figma.editorType === 'figjam') {
       for (let i = 0; i < numberOfShapes; i++) {
         const shape = figma.createShapeWithText();
         // You can set shapeType to one of: 'SQUARE' | 'ELLIPSE' | 'ROUNDED_RECTANGLE' | 'DIAMOND' | 'TRIANGLE_UP' | 'TRIANGLE_DOWN' | 'PARALLELOGRAM_RIGHT' | 'PARALLELOGRAM_LEFT'
-        shape.shapeType = 'ROUNDED_RECTANGLE'
+        shape.shapeType = 'ROUNDED_RECTANGLE';
         shape.x = i * (shape.width + 200);
         shape.fills = [{ type: 'SOLID', color: { r: 1, g: 0.5, b: 0 } }];
         figma.currentPage.appendChild(shape);
         nodes.push(shape);
-      };
+      }
 
-      for (let i = 0; i < (numberOfShapes - 1); i++) {
+      for (let i = 0; i < numberOfShapes - 1; i++) {
         const connector = figma.createConnector();
-        connector.strokeWeight = 8
+        connector.strokeWeight = 8;
 
         connector.connectorStart = {
           endpointNodeId: nodes[i].id,
@@ -76,7 +104,7 @@ if (figma.editorType === 'figjam') {
           endpointNodeId: nodes[i + 1].id,
           magnet: 'AUTO',
         };
-      };
+      }
 
       figma.currentPage.selection = nodes;
       figma.viewport.scrollAndZoomIntoView(nodes);
@@ -86,4 +114,4 @@ if (figma.editorType === 'figjam') {
     // keep running, which shows the cancel button at the bottom of the screen.
     figma.closePlugin();
   };
-};
+}

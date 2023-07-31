@@ -1,18 +1,37 @@
 <h2>Shape Creator</h2>
-<p>Count: <input id="count" type="number" value="5"></p>
+<p>Count: <input id="count" type="number" value="5" /></p>
 <button id="create">Create</button>
 <button id="cancel">Cancel</button>
 
-<script>
+<h1>Hello, <span id="name"></span>!</h1>
+<p>Age: <span id="age"></span></p>
+<p>Location: <span id="location"></span></p>
 
+<script>
   document.getElementById('create').onclick = () => {
     const textbox = document.getElementById('count');
     const count = parseInt(textbox.value, 10);
-    parent.postMessage({ pluginMessage: { type: 'create-shapes', count } }, '*')
-  }
+    parent.postMessage(
+      { pluginMessage: { type: 'create-shapes', count } },
+      '*',
+    );
+  };
 
   document.getElementById('cancel').onclick = () => {
-    parent.postMessage({ pluginMessage: { type: 'cancel' } }, '*')
-  }
+    parent.postMessage({ pluginMessage: { type: 'cancel' } }, '*');
+  };
 
+  onmessage = event => {
+    console.log(event);
+    const { name, age, location } = event.data.pluginMessage;
+
+    // 將數據顯示在 UI 上
+    const nameElement = document.getElementById('name');
+    const ageElement = document.getElementById('age');
+    const locationElement = document.getElementById('location');
+
+    nameElement.textContent = name;
+    ageElement.textContent = age;
+    locationElement.textContent = location;
+  };
 </script>
